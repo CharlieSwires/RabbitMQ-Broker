@@ -3,6 +3,7 @@ package com.unicard.rabbit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -15,6 +16,9 @@ public class RabbitMQConsumer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQConsumer.class);
 
+    @Autowired
+    private RabbitMQProducerBack producer;
+
     @RabbitListener(queues = {"${rabbitmq.queue1.name}"})
     public void consume(String message){
         final String uri = "http://archiver:8080/uni-archiver/api/v1/dataarray";
@@ -26,8 +30,9 @@ public class RabbitMQConsumer {
         HttpEntity<String> entity = new HttpEntity<String>(ib ,headers);
 
         @SuppressWarnings("unchecked")
-		Boolean result = restTemplate.postForObject( uri, entity, Boolean.class);
-
+		Long result = restTemplate.postForObject( uri, entity, Long.class);
+        producer.sendMessage(result);
+        
         LOGGER.info(String.format("Received message -> %s", message));
     }
 }
