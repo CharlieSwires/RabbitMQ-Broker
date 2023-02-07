@@ -59,7 +59,7 @@ public class RController  {
 //			// TODO Auto-generated catch block
 //			e1.printStackTrace();
 //		}
-		while (bean.getMessageId()!= (messageId != null ? messageId.get(): null)) {
+		while (!bean.getMessageId().equals((messageId != null ? messageId.get(): null))) {
 			if (i++ > 1000) break;
 			try {
 				Thread.sleep(10);
