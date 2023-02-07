@@ -15,7 +15,7 @@ public class RabbitMQConsumer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQConsumer.class);
 
-    @RabbitListener(queues = {"${rabbitmq.queue.name}"})
+    @RabbitListener(queues = {"${rabbitmq.queue1.name}"})
     public void consume(String message){
         final String uri = "http://archiver:8080/uni-archiver/api/v1/dataarray";
         String ib = message;
