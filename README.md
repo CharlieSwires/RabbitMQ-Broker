@@ -15,13 +15,17 @@ build
 
 deploy
 ------
-
+<p>docker run -d --name some-mongo \
+	-e MONGO_INITDB_ROOT_USERNAME=root \
+	-e MONGO_INITDB_ROOT_PASSWORD=? \
+	mongo:6.0
+</p>
 <p>If there isn't one deployed and running you'll need rabbitmq.</p>
 <p>docker pull rabbitmq:3.10-management</p>
 <p>docker run --name rabbitmq --rm -it -p 15672:15672 -p 5672:5672 rabbitmq:3.10-management</p>
 <br>
 <p>docker build --tag rabbit:latest .</p>
-<p>docker run --name rabbit --link archiver --link rabbitmq -d -p 9900:8080 rabbit:latest</p>
+<p>docker run --name rabbit --link some-mongo --link rabbitmq -d -p 9900:8080 rabbit:latest</p>
 
 
 RESTful
