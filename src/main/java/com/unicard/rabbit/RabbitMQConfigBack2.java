@@ -8,36 +8,37 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class RabbitMQConfigBack {
-  
-    @Value("${rabbitmq.queue2.name}")
-    private String queue2;
+public class RabbitMQConfigBack2 {
 
-    @Value("${rabbitmq.exchange2.name}")
-    private String exchange2;
+    
+    @Value("${rabbitmq.queue4.name}")
+    private String queue4;
 
-    @Value("${rabbitmq.routing2.key}")
-    private String routingKey2;
+    @Value("${rabbitmq.exchange4.name}")
+    private String exchange4;
+
+    @Value("${rabbitmq.routing4.key}")
+    private String routingKey4;
 
     // spring bean for rabbitmq queue
     @Bean
-    public Queue queue2(){
-        return new Queue(queue2);
+    public Queue queue4(){
+        return new Queue(queue4);
     }
 
     // spring bean for rabbitmq exchange
     @Bean
-    public TopicExchange exchange2(){
-        return new TopicExchange(exchange2);
+    public TopicExchange exchange4(){
+        return new TopicExchange(exchange4);
     }
 
     // binding between queue and exchange using routing key
     @Bean
-    public Binding binding2(){
+    public Binding binding4(){
         return BindingBuilder
-                .bind(queue2())
-                .to(exchange2())
-                .with(routingKey2);
+                .bind(queue4())
+                .to(exchange4())
+                .with(routingKey4);
     }
 
 // Spring boot autoconfiguration provides following beans

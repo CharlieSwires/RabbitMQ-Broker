@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,42 +24,51 @@ import com.unicard.rabbit.RequestBean.Inner;
 @RequestMapping(path = "/UniCard/api/v1")
 public class RController  {
 
-    Logger log = LoggerFactory.getLogger(RController.class);
-    @Autowired
-    private RabbitMQProducer producer;
+	Logger log = LoggerFactory.getLogger(RController.class);
 
-    public String msg = "hello";
-    
-    public AtomicLong messageId = null;
-    
-    // http://localhost:9900/UniCard/api/v1/dataarray
-    @PostMapping("/dataarray")
-    public ResponseEntity<Long> post( @RequestBody List<Inner> input){
-        ObjectMapper mapper = new ObjectMapper();
-        RequestBean bean = new RequestBean();
-        bean.setList(input);
-        
-        try {
+	@Autowired
+	private RabbitMQProducer producer;
+
+	@Autowired
+	private RabbitMQProducer2 producer2;
+
+	public String msg = "hello";
+
+	public AtomicLong messageId = null;
+
+	// http://localhost:9900/UniCard/api/v1/dataarray
+	@PostMapping("/dataarray/{channel}")
+	public ResponseEntity<Long> post(@PathVariable("channel") String channel, @RequestBody List<Inner> input){
+		ObjectMapper mapper = new ObjectMapper();
+		RequestBean bean = new RequestBean();
+		bean.setList(input);
+
+		try {
 			SecureRandom rand = SecureRandom.getInstanceStrong();
 			bean.setMessageId(rand.nextLong());
 		} catch (NoSuchAlgorithmException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-        String jsonStr = null;
+		String jsonStr = null;
 		try {
 			jsonStr = mapper.writeValueAsString(bean);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
-        producer.sendMessage(jsonStr);
-        int i = 0;
-//        try {
-//			msg.wait();
-//		} catch (InterruptedException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		}
+		switch(channel) {
+		case "one":
+			producer.sendMessage(jsonStr);
+			break;
+		case "two":
+			producer2.sendMessage(jsonStr);
+			break;
+		default:
+			throw new IllegalArgumentException("not found = "+channel);
+
+
+		}
+		int i = 0;
 		while (!bean.getMessageId().equals((messageId != null ? messageId.get(): null))) {
 			if (i++ > 1000) break;
 			try {
@@ -68,7 +78,7 @@ public class RController  {
 				e.printStackTrace();
 			}
 		}
-        return ResponseEntity.ok(messageId != null ? messageId.get(): null);
-    }    
+		return ResponseEntity.ok(messageId != null ? messageId.get(): null);
+	}    
 
 }

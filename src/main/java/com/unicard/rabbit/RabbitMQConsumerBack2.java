@@ -9,13 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RabbitMQConsumerBack {
+public class RabbitMQConsumerBack2 {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQConsumerBack.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQConsumerBack2.class);
     @Autowired
     private RController control;
    
-    @RabbitListener(queues = {"${rabbitmq.queue2.name}"})
+    @RabbitListener(queues = {"${rabbitmq.queue4.name}"})
     public void consume(Long message){
     	if (message != null) {
     		control.messageId= new AtomicLong(message);

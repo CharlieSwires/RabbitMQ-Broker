@@ -16,11 +16,6 @@ public class RabbitMQProducer {
 	    @Value("${rabbitmq.routing1.key}")
 	    private String routingKey1;
 	    
-	    @Value("${rabbitmq.exchange2.name}")
-	    private String exchange2;
-
-	    @Value("${rabbitmq.routing2.key}")
-	    private String routingKey2;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQProducer.class);
 

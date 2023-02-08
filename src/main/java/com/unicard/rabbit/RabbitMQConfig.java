@@ -19,15 +19,6 @@ public class RabbitMQConfig {
     @Value("${rabbitmq.routing1.key}")
     private String routingKey1;
     
-    @Value("${rabbitmq.queue2.name}")
-    private String queue2;
-
-    @Value("${rabbitmq.exchange2.name}")
-    private String exchange2;
-
-    @Value("${rabbitmq.routing2.key}")
-    private String routingKey2;
-
     // spring bean for rabbitmq queue
     @Bean
     public Queue queue(){
