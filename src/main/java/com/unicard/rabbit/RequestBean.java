@@ -8,8 +8,29 @@ public class RequestBean {
 
 	}
 	private Long messageId;
-
 	private List<Inner> list;
+	private String dateStart;
+	private String dateEnd;
+	private Integer psge;
+	
+	public String getDateStart() {
+		return dateStart;
+	}
+	public void setDateStart(String dateStart) {
+		this.dateStart = dateStart;
+	}
+	public String getDateEnd() {
+		return dateEnd;
+	}
+	public void setDateEnd(String dateEnd) {
+		this.dateEnd = dateEnd;
+	}
+	public Integer getPsge() {
+		return psge;
+	}
+	public void setPsge(Integer psge) {
+		this.psge = psge;
+	}
 	public Long getMessageId() {
 		return messageId;
 	}
@@ -28,9 +49,16 @@ public class RequestBean {
 		public Inner() {
 			
 		}
+		private String id;
 		private String customerId;
 		private Date usedDate;
 		private String xmlData;
+		public String getId() {
+			return id;
+		}
+		public void setId(String id) {
+			this.id = id;
+		}
 		public String getCustomerId() {
 			return customerId;
 		}
