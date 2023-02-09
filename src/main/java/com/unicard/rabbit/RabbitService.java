@@ -80,7 +80,7 @@ public class RabbitService implements Observer, ObserverRequestBean{
 
 
 		}
-		waitForMessage2(bean.getMessageId());
+		waitForMessage(bean.getMessageId());
 		synchronized(dummy) {
 			mq.responses.remove(bean.getMessageId());
 			LOGGER.info("*remove responses count = "+mq.responses.size());
@@ -123,7 +123,7 @@ public class RabbitService implements Observer, ObserverRequestBean{
 
 		}
 
-		waitForMessage1(bean.getMessageId());
+		waitForMessage(bean.getMessageId());
 		List<Inner> results = mq.responses.get(bean.getMessageId()) != null ?
 				mq.responses.get(bean.getMessageId()).getList() :
 					new ArrayList<Inner>();
@@ -145,7 +145,7 @@ public class RabbitService implements Observer, ObserverRequestBean{
 		return new ResponseEntity<List<Inner>>(resultsCopy, HttpStatus.OK);
 	}
 
-	private void waitForMessage1(Long messageId) {
+	private void waitForMessage(Long messageId) {
 		int i = 0;
 		while (mq.messageIds.isEmpty() || !mq.messageIds.contains(messageId)) {
 			if (i++ > 1000) break;
@@ -163,23 +163,7 @@ public class RabbitService implements Observer, ObserverRequestBean{
 		}
 		return;
 	}	
-	private void waitForMessage2(Long messageId) {
-		int i = 0;
-		while (mq.messageIds.isEmpty() || !mq.messageIds.contains(messageId)) {
-			if (i++ > 1000) break;
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		synchronized(dummy) {
-			mq.messageIds.remove(messageId);
-			LOGGER.info("remove messageIds count = "+mq.messageIds.size());
-		}
-		return;
-	}
+	
 
 	@Override
 	public synchronized void update(String str) {
