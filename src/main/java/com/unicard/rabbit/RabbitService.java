@@ -22,14 +22,14 @@ import jakarta.annotation.PostConstruct;
 
 @Service
 public class RabbitService implements Observer, ObserverRequestBean{
-    private static final Logger LOGGER = LoggerFactory.getLogger(RabbitService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(RabbitService.class);
 
 	@Autowired
 	private RabbitMQConsumerBack consumer1;
-	
+
 	@Autowired
 	private RabbitMQConsumerBack2 consumer2;
-	
+
 	@Autowired
 	private RabbitMQProducer producer;
 
@@ -38,9 +38,9 @@ public class RabbitService implements Observer, ObserverRequestBean{
 
 	@Autowired
 	private MessagesQueues mq;
-	
+
 	private Object dummy = (Object)"fred";
-	
+
 	@PostConstruct
 	private void init() {
 		consumer2.registerObserver((Observer) this);
@@ -49,7 +49,7 @@ public class RabbitService implements Observer, ObserverRequestBean{
 		consumer1.registerObserver((ObserverRequestBean) this);
 		LOGGER.info("Init completed");
 	}
-	
+
 	public ResponseEntity<Long> post(String channel, List<Inner> input) {
 		ObjectMapper mapper = new ObjectMapper();
 		RequestBean bean = new RequestBean();
@@ -128,13 +128,15 @@ public class RabbitService implements Observer, ObserverRequestBean{
 				mq.responses.get(bean.getMessageId()).getList() :
 					new ArrayList<Inner>();
 		List<Inner> resultsCopy = new ArrayList<Inner>();
-		for (Inner item: results) {
-			Inner temp = new Inner();
-			temp.setCustomerId(item.getCustomerId());
-			temp.setId(item.getId());
-			temp.setUsedDate(item.getUsedDate());
-			temp.setXmlData(item.getXmlData());
-			resultsCopy.add(temp);
+		if (results != null) {
+			for (Inner item: results) {
+				Inner temp = new Inner();
+				temp.setCustomerId(item.getCustomerId());
+				temp.setId(item.getId());
+				temp.setUsedDate(item.getUsedDate());
+				temp.setXmlData(item.getXmlData());
+				resultsCopy.add(temp);
+			}
 		}
 		synchronized(dummy) {
 			mq.responses.remove(bean.getMessageId());
