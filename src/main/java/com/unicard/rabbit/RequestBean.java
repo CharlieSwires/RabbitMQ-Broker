@@ -2,8 +2,26 @@ package com.unicard.rabbit;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class RequestBean {
+	@Override
+	public int hashCode() {
+		return Objects.hash(dateEnd, dateStart, list, messageId, psge);
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		RequestBean other = (RequestBean) obj;
+		return Objects.equals(dateEnd, other.dateEnd) && Objects.equals(dateStart, other.dateStart)
+				&& Objects.equals(list, other.list) && Objects.equals(messageId, other.messageId)
+				&& Objects.equals(psge, other.psge);
+	}
 	public RequestBean() {
 
 	}
@@ -46,6 +64,22 @@ public class RequestBean {
 	}
 
 	static class Inner {
+		@Override
+		public int hashCode() {
+			return Objects.hash(customerId, id, usedDate, xmlData);
+		}
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Inner other = (Inner) obj;
+			return Objects.equals(customerId, other.customerId) && Objects.equals(id, other.id)
+					&& Objects.equals(usedDate, other.usedDate) && Objects.equals(xmlData, other.xmlData);
+		}
 		public Inner() {
 			
 		}

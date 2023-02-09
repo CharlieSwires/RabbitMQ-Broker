@@ -4,9 +4,14 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.Map;
+import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,16 +21,37 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unicard.rabbit.RequestBean.Inner;
 
+import jakarta.annotation.PostConstruct;
+
 @Service
-public class RabbitService {
+public class RabbitService implements Observer, ObserverRequestBean{
+    private static final Logger LOGGER = LoggerFactory.getLogger(RabbitService.class);
+
+	@Autowired
+	private RabbitMQConsumerBack consumer1;
+	
+	@Autowired
+	private RabbitMQConsumerBack2 consumer2;
+	
 	@Autowired
 	private RabbitMQProducer producer;
 
 	@Autowired
 	private RabbitMQProducer2 producer2;
+
+	@Autowired
+	private MessagesQueues mq;
 	
-	public AtomicLong messageId;
-	public RequestBean response;
+	private Object dummy = (Object)"fred";
+	
+	@PostConstruct
+	private void init() {
+		consumer2.registerObserver((Observer) this);
+		consumer1.registerObserver((Observer) this);
+		consumer2.registerObserver((ObserverRequestBean) this);
+		consumer1.registerObserver((ObserverRequestBean) this);
+		LOGGER.info("Init completed");
+	}
 	
 	public ResponseEntity<Long> post(String channel, List<Inner> input) {
 		ObjectMapper mapper = new ObjectMapper();
@@ -57,26 +83,21 @@ public class RabbitService {
 
 
 		}
-		int i = 0;
-		while (!bean.getMessageId().equals((messageId != null ? messageId.get(): null))) {
-			if (i++ > 1000) break;
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		waitForMessage2(bean.getMessageId());
+		synchronized(dummy) {
+			mq.responses.remove(bean.getMessageId());
+			LOGGER.info("*remove responses count = "+mq.responses.size());
 		}
-		return ResponseEntity.ok(messageId != null ? messageId.get(): null);
+		return ResponseEntity.ok(bean.getMessageId());
 
 	}
 
 	public ResponseEntity<List<Inner>> get(String dateStart, String dateEnd, Integer page, String channel) {
-    	DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		RequestBean bean = new RequestBean();
-    	bean.setDateStart(dateStart);
-    	bean.setDateEnd(dateEnd);
-    	bean.setPsge(page);
+		bean.setDateStart(dateStart);
+		bean.setDateEnd(dateEnd);
+		bean.setPsge(page);
 		ObjectMapper mapper = new ObjectMapper();
 
 		try {
@@ -104,8 +125,19 @@ public class RabbitService {
 
 
 		}
+
+		waitForMessage1(bean.getMessageId());
+		List<Inner> results = mq.responses.get(bean.getMessageId()).getList();
+		synchronized(dummy) {
+			mq.responses.remove(bean.getMessageId());
+			LOGGER.info("remove responses count = "+mq.responses.size());
+		}
+		return new ResponseEntity<List<Inner>>(results, HttpStatus.OK);
+	}
+
+	private void waitForMessage1(Long messageId) {
 		int i = 0;
-		while (!bean.getMessageId().equals((messageId != null ? messageId.get(): null))) {
+		while (mq.messageIds.isEmpty() || !mq.messageIds.contains(messageId)) {
 			if (i++ > 1000) break;
 			try {
 				Thread.sleep(10);
@@ -114,8 +146,47 @@ public class RabbitService {
 				e.printStackTrace();
 			}
 		}
+		synchronized(dummy) {
+			mq.messageIds.remove(messageId);
+			LOGGER.info("*remove messageIds count = "+mq.messageIds.size());
 
-    	return new ResponseEntity<List<Inner>>(response.getList(), HttpStatus.OK);
+		}
+		return;
+	}	
+	private void waitForMessage2(Long messageId) {
+		int i = 0;
+		while (mq.messageIds.isEmpty() || !mq.messageIds.contains(messageId)) {
+			if (i++ > 1000) break;
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		synchronized(dummy) {
+			mq.messageIds.remove(messageId);
+			LOGGER.info("remove messageIds count = "+mq.messageIds.size());
+		}
+		return;
 	}
+
+	@Override
+	public synchronized void update(String str) {
+		if (str == null) return;
+		if (mq.messageIds != null && mq.messageIds.contains((Long)(Long.parseLong(str)))) return;
+		mq.messageIds.add((Long)(Long.parseLong(str)));
+		LOGGER.info("add messageIds count = "+mq.messageIds.size());
+	}
+
+	@Override
+	public synchronized void update(RequestBean bean) {
+		if (bean == null) return;
+		if (mq.responses != null && mq.responses.containsKey(bean.getMessageId())) return;
+		mq.responses.put(bean.getMessageId(), bean);
+		LOGGER.info("put responses count = "+mq.responses.size());
+
+	}
+
 
 }
