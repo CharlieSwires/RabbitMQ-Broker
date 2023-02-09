@@ -4,11 +4,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,12 +124,23 @@ public class RabbitService implements Observer, ObserverRequestBean{
 		}
 
 		waitForMessage1(bean.getMessageId());
-		List<Inner> results = mq.responses.get(bean.getMessageId()).getList();
+		List<Inner> results = mq.responses.get(bean.getMessageId()) != null ?
+				mq.responses.get(bean.getMessageId()).getList() :
+					new ArrayList<Inner>();
+		List<Inner> resultsCopy = new ArrayList<Inner>();
+		for (Inner item: results) {
+			Inner temp = new Inner();
+			temp.setCustomerId(item.getCustomerId());
+			temp.setId(item.getId());
+			temp.setUsedDate(item.getUsedDate());
+			temp.setXmlData(item.getXmlData());
+			resultsCopy.add(temp);
+		}
 		synchronized(dummy) {
 			mq.responses.remove(bean.getMessageId());
 			LOGGER.info("remove responses count = "+mq.responses.size());
 		}
-		return new ResponseEntity<List<Inner>>(results, HttpStatus.OK);
+		return new ResponseEntity<List<Inner>>(resultsCopy, HttpStatus.OK);
 	}
 
 	private void waitForMessage1(Long messageId) {
