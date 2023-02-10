@@ -44,5 +44,7 @@ RESTful
     }
 ]
 </code>
-<p>POST - http://localhost:9900/UniCard/api/v1/dataarray</p>
+<p>POST - http://localhost:9900/UniCard/api/v1/dataarray/?</p>
+<p>GET - http://localhost:9900/UniCard/api/v1/dataarray/2020-01-01/2023-01-01/0/?</p>
+<p> where ? can be one or two.</p>
 
