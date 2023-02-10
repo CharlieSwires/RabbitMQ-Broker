@@ -34,9 +34,9 @@ public class RController  {
 		ResponseEntity<Long> result = service.post(channel,input);
 		return result;
 	}    
-    @GetMapping(path="/dataarray/{dateStart}/{dateEnd}/{page}/{channel}", produces="application/json")
-    public ResponseEntity<List<Inner>> getAllArray(@PathVariable("dateStart") String dateStart, @PathVariable("dateEnd") String dateEnd,@PathVariable("page") Integer page, @PathVariable("channel") String channel) throws Exception {
-    	ResponseEntity<List<Inner>> result = service.get(dateStart, dateEnd, page, channel);
+    @GetMapping(path="/dataarray/{channel}/{dstart}/{dend}/{page}", produces="application/json")
+    public ResponseEntity<List<Inner>> getAllArray(@PathVariable("channel") String channel, @PathVariable("dstart") String dstart,@PathVariable("dend") String dend,@PathVariable("page") String page) throws Exception {
+    	ResponseEntity<List<Inner>> result = service.get(channel, "/"+dstart+"/"+dend+"/"+page);
 		
 		return result;
     }

@@ -89,12 +89,10 @@ public class RabbitService implements Observer, ObserverRequestBean{
 
 	}
 
-	public ResponseEntity<List<Inner>> get(String dateStart, String dateEnd, Integer page, String channel) {
+	public ResponseEntity<List<Inner>> get(String channel, String path) {
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		RequestBean bean = new RequestBean();
-		bean.setDateStart(dateStart);
-		bean.setDateEnd(dateEnd);
-		bean.setPsge(page);
+		bean.setDateStart(path);
 		ObjectMapper mapper = new ObjectMapper();
 
 		try {
