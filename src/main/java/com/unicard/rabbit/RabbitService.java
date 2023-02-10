@@ -168,7 +168,6 @@ public class RabbitService implements Observer, ObserverRequestBean{
 	@Override
 	public synchronized void update(String str) {
 		if (str == null) return;
-		if (mq.messageIds != null && mq.messageIds.contains((Long)(Long.parseLong(str)))) return;
 		mq.messageIds.add((Long)(Long.parseLong(str)));
 		LOGGER.info("add messageIds count = "+mq.messageIds.size());
 	}
@@ -176,7 +175,6 @@ public class RabbitService implements Observer, ObserverRequestBean{
 	@Override
 	public synchronized void update(RequestBean bean) {
 		if (bean == null) return;
-		if (mq.responses != null && mq.responses.containsKey(bean.getMessageId())) return;
 		mq.responses.put(bean.getMessageId(), bean);
 		LOGGER.info("put responses count = "+mq.responses.size());
 
