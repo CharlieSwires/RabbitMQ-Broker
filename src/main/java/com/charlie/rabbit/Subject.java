@@ -1,4 +1,4 @@
-package com.unicard.rabbit;
+package com.charlie.rabbit;
 
 public interface Subject {
 	public void registerObserver(Observer o);

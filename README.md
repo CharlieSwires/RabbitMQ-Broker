@@ -1,7 +1,7 @@
 rabbit
 ------
 <p>in git bash</p>
-<p>git clone https://gitlab.com/UnicardLtd/product/RabbitMQ-Broker.git</p>
+<p>git clone https://github.com/CharlieSwires/RabbitMQ-Broker.git</p>
 <p>This contains the java</p>
 
 build
@@ -44,7 +44,7 @@ RESTful
     }
 ]
 </code>
-<p>POST - http://localhost:9900/UniCard/api/v1/dataarray/?</p>
-<p>GET - http://localhost:9900/UniCard/api/v1/dataarray/2020-01-01/2023-01-01/0/?</p>
+<p>POST - http://localhost:9900/Charlie/api/v1/dataarray/?</p>
+<p>GET - http://localhost:9900/Charlie/api/v1/dataarray/2020-01-01/2023-01-01/0/?</p>
 <p> where ? can be one or two.</p>
 

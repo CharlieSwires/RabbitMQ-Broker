@@ -1,4 +1,4 @@
-package com.unicard.rabbit;
+package com.charlie.rabbit;
 
 import java.util.HashMap;
 import java.util.HashSet;

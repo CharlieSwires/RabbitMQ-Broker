@@ -1,4 +1,4 @@
-package com.unicard.rabbit;
+package com.charlie.rabbit;
 
 import java.util.List;
 
@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.unicard.rabbit.RequestBean.Inner;
+import com.charlie.rabbit.RequestBean.Inner;
 
 
 @RestController
-@RequestMapping(path = "/UniCard/api/v1")
+@RequestMapping(path = "/Charlie/api/v1")
 public class RController  {
 
 	Logger log = LoggerFactory.getLogger(RController.class);

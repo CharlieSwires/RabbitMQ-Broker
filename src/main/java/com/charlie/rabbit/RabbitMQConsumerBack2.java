@@ -1,4 +1,4 @@
-package com.unicard.rabbit;
+package com.charlie.rabbit;
 
 import java.util.ArrayList;
 
@@ -11,12 +11,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
-public class RabbitMQConsumerBack implements Subject, SubjectRequestBean{
+public class RabbitMQConsumerBack2 implements Subject,SubjectRequestBean{
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQConsumerBack.class);
-    @RabbitListener(queues = {"${rabbitmq.queue2.name}"})
+    private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQConsumerBack2.class);
+   
+    @RabbitListener(queues = {"${rabbitmq.queue4.name}"})
     public void consume(String message){
-       	if (message != null) {
+
+    	if (message != null) {
     		ObjectMapper mapper = new ObjectMapper();
 
     		RequestBean bean = null;
@@ -30,12 +32,13 @@ public class RabbitMQConsumerBack implements Subject, SubjectRequestBean{
         		LOGGER.info(String.format("Received message -> %s", message));
         		LOGGER.info(String.format("observers count -> %s", observers.size()));
         		LOGGER.info(String.format("observersRB count -> %s", observersRB.size()));
-    		
+
 
     	}else {
             LOGGER.info(String.format("Received message -> null"));
     	}
     }
+
 	private static ArrayList<Observer> observers = new ArrayList<Observer>();
 	protected static String subject = null;
 	
@@ -58,12 +61,12 @@ public class RabbitMQConsumerBack implements Subject, SubjectRequestBean{
 		}
 		
 	}
-	
 	public void setSubject(String sub) {
 		if (sub == null) return;
-		RabbitMQConsumerBack.subject =sub;
+		RabbitMQConsumerBack2.subject =sub;
 		notifyObservers();
 	}
+	
 	private static ArrayList<ObserverRequestBean> observersRB = new ArrayList<ObserverRequestBean>();
 	protected static RequestBean subjectRB = null;
 
@@ -88,7 +91,7 @@ public class RabbitMQConsumerBack implements Subject, SubjectRequestBean{
 	}
 	public void setSubject(RequestBean sub) {
 		if (sub == null) return;
-		RabbitMQConsumerBack.subjectRB =sub;
+		RabbitMQConsumerBack2.subjectRB =sub;
 		notifyObserversRequestBean();
 	}
 

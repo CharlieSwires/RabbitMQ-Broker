@@ -1,4 +1,4 @@
-package com.unicard.rabbit;
+package com.charlie.rabbit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

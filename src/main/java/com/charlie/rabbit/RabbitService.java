@@ -1,4 +1,4 @@
-package com.unicard.rabbit;
+package com.charlie.rabbit;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -14,16 +14,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.charlie.rabbit.RequestBean.Inner;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.unicard.rabbit.RequestBean.Inner;
 
 import jakarta.annotation.PostConstruct;
 
 @Service
 public class RabbitService implements Observer, ObserverRequestBean{
 	private static final Logger LOGGER = LoggerFactory.getLogger(RabbitService.class);
-
+	private static final int TIMEOUT = 1000;
 	@Autowired
 	private RabbitMQConsumerBack consumer1;
 
@@ -146,7 +146,10 @@ public class RabbitService implements Observer, ObserverRequestBean{
 	private void waitForMessage(Long messageId) {
 		int i = 0;
 		while (mq.messageIds.isEmpty() || !mq.messageIds.contains(messageId)) {
-			if (i++ > 1000) break;
+			if (i++ > TIMEOUT) {
+				LOGGER.error("Timeout detected message="+messageId);
+				break;
+			}
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
